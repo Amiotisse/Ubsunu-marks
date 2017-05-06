@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public enum UserType {
 
-    teacher("teacher" ) ,
+    teacher ("teacher") ,
     student ("student") ;
 
     private String asString ;
@@ -27,7 +27,7 @@ public enum UserType {
     }
 
 
-    public static Map<String , UserType> fromString = ImmutableMap
+    public static final Map<String , UserType> fromString = ImmutableMap
             .<String , UserType> builder()
             .put(UserType.teacher.toString() , UserType.teacher)
             .put(UserType.student.toString() , UserType.student)
