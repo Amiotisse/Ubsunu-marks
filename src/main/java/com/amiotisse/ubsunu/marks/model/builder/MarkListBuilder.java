@@ -31,7 +31,7 @@ public class MarkListBuilder {
     }
 
 
-    public MarkList createMarkList() {
+    public MarkList build() {
         return new MarkList(title, ownerUserId, marks);
     }
 }

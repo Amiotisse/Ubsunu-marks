@@ -1,5 +1,7 @@
 package com.amiotisse.ubsunu.marks.model;
 
+import org.springframework.data.annotation.Id;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +11,9 @@ import java.util.List;
  */
 public class MarkList {
 
+    @Id
     private String title;
+
     private String ownerUserId;
     private List<Mark> marks;
 

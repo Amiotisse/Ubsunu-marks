@@ -22,7 +22,7 @@ public class StudentBuilder {
         return this;
     }
 
-    public Student createStudent() {
+    public Student build() {
         return new Student(lastName, firstName, email);
     }
 }

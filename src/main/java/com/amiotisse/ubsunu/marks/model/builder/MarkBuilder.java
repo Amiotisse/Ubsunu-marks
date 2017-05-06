@@ -17,7 +17,7 @@ public class MarkBuilder {
         return this;
     }
 
-    public Mark createMark() {
+    public Mark build() {
         return new Mark(student, value);
     }
 }

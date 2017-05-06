@@ -47,6 +47,7 @@ public class FilterConfiguration
 
     @Bean List<String> securedUrlPatterns(){
         return Lists.newArrayList(
+                "/teacher/*"
                 // TODO add url patterns
         );
     }
