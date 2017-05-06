@@ -1,0 +1,28 @@
+language: java
+jdk:
+- oraclejdk8
+
+dist: trusty
+sudo: required
+
+addons:
+  sonarqube:
+    organization: "alphau"
+
+env:
+  global:
+  - dockerImagePrefix: amiotisse
+  - dockerImageName: ubsunu-marks
+  - dockerImageTag: RC1
+
+services:
+- mongodb
+- docker
+
+script:
+- mvn clean install docker:build -Ddocker.image.prefix=$dockerImagePrefix -Ddocker.image.name=$dockerImageName -Ddocker.image.tag=$dockerImageTag
+
+after_success:
+- sonar-scanner
+- docker login -u$DOCKER_HUB_USERNAME -p$DOCKER_HUB_PASSWORD
+- docker push $dockerImagePrefix/$dockerImageName:$dockerImageTag
