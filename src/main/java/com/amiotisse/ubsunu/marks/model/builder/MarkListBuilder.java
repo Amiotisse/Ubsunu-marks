@@ -25,6 +25,11 @@ public class MarkListBuilder {
         this.marks.addAll(marks);
         return this;
     }
+
+    public MarkListBuilder setMarks(List<Mark> marks) {
+        this.marks= marks;
+        return this;
+    }
     public MarkListBuilder addMark(Mark mark) {
         this.marks.add(mark);
         return this;
