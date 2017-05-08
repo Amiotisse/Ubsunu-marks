@@ -1,6 +1,7 @@
 package com.amiotisse.ubsunu.marks.controller;
 
 import com.amiotisse.ubsunu.marks.ApiErrors;
+import com.amiotisse.ubsunu.marks.client.MailerFiegnClient;
 import com.amiotisse.ubsunu.marks.model.Mark;
 import com.amiotisse.ubsunu.marks.model.MarkList;
 import com.amiotisse.ubsunu.marks.model.UserToken;
@@ -22,9 +23,13 @@ import java.util.List;
 public class PrivateMarkListController {
 
     private MarkListRepository markListRepository;
+    private MailerFiegnClient mailerFiegnClient;
+    private boolean isMailerEnable;
 
-    public PrivateMarkListController(MarkListRepository markListRepository) {
+    public PrivateMarkListController(MarkListRepository markListRepository, MailerFiegnClient mailerFiegnClient, boolean isMailerEnable) {
         this.markListRepository = markListRepository;
+        this.mailerFiegnClient = mailerFiegnClient;
+        this.isMailerEnable = isMailerEnable ;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -38,13 +43,17 @@ public class PrivateMarkListController {
         if (markListRepository.exists(title))
             return new ResponseEntity<>(ApiErrors.MARKS_LIST_TITLE_TAKEN , HttpStatus.BAD_REQUEST);
 
-        markListRepository.save(
+        MarkList markList = markListRepository.save(
                 new MarkListBuilder()
                 .setTitle(title)
                 .setOwnerUserId(userToken.getId())
                 .addMark(marks)
                 .build()
         );
+
+        if( isMailerEnable ){
+            mailerFiegnClient.publishMarkList(markList);
+        }
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
