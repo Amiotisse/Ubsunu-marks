@@ -18,9 +18,9 @@ public class ApiErrors {
             " no list matches the request "
     );
 
-    public static final ApiError MARKS_LIST_TITLE_TAKEN
+    public static final ApiError LIST_TITLE_TAKEN
             = new ApiError(
-            "MARKS_LIST_TITLE_TAKEN" ,
+            "LIST_TITLE_TAKEN" ,
             " title already exist"
     );
 }

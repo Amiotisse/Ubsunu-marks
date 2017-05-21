@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @since 5/6/2017.
  */
 //@RestController
-@RequestMapping(value = "/marks")
+@RequestMapping(path = "/marks")
 public class PublicMarkListController {
 
     private static Logger log = LoggerFactory.getLogger(PublicMarkListController.class);

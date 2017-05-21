@@ -12,7 +12,7 @@ addons:
 env:
   global:
   - dockerImagePrefix: amiotisse
-  - dockerImageName: ubsunu-marks
+  - dockerImageName: ubsunu-list
   - dockerImageTag: RC1
 
 services:

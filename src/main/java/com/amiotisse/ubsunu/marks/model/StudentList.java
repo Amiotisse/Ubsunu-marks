@@ -2,29 +2,24 @@ package com.amiotisse.ubsunu.marks.model;
 
 import org.springframework.data.annotation.Id;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author himna
- * @since 5/6/2017.
+ * @since 5/21/2017.
  */
-public class MarkList implements PrivateList<Mark> {
+public class StudentList implements PrivateList<Student> {
 
     @Id
     private String title;
 
     private String ownerUserId;
-    private List<Mark> list;
+    private List<Student> list;
 
-    public MarkList(String title, String ownerUserId, List<Mark> list) {
+    public StudentList(String title, String ownerUserId, List<Student> list) {
         this.title = title;
         this.ownerUserId = ownerUserId;
         this.list = list;
-    }
-
-    public MarkList() {
-        this.list = new ArrayList<>();
     }
 
     public String getTitle() {
@@ -43,11 +38,11 @@ public class MarkList implements PrivateList<Mark> {
         this.ownerUserId = ownerUserId;
     }
 
-    public List<Mark> getList() {
+    public List<Student> getList() {
         return list;
     }
 
-    public void setList(List<Mark> list) {
+    public void setList(List<Student> list) {
         this.list = list;
     }
 
@@ -56,12 +51,11 @@ public class MarkList implements PrivateList<Mark> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        MarkList markList = (MarkList) o;
+        StudentList that = (StudentList) o;
 
-        if (title != null ? !title.equals(markList.title) : markList.title != null) return false;
-        if (ownerUserId != null ? !ownerUserId.equals(markList.ownerUserId) : markList.ownerUserId != null)
-            return false;
-        return list != null ? list.equals(markList.list) : markList.list == null;
+        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        if (ownerUserId != null ? !ownerUserId.equals(that.ownerUserId) : that.ownerUserId != null) return false;
+        return list != null ? list.equals(that.list) : that.list == null;
     }
 
     @Override
@@ -74,11 +68,10 @@ public class MarkList implements PrivateList<Mark> {
 
     @Override
     public String toString() {
-        return "MarkList{" +
+        return "StudentList{" +
                 "title='" + title + '\'' +
                 ", ownerUserId='" + ownerUserId + '\'' +
                 ", list=" + list +
                 '}';
     }
-
 }
