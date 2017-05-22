@@ -41,7 +41,6 @@ public class PrivateMarkListController {
             @RequestBody List<Mark> marks,
             @RequestParam String title
     ){
-
         try {
             MarkList markList = service.save( title, userToken, marks );
 
