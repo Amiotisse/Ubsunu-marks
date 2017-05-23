@@ -1,9 +1,10 @@
 package com.amiotisse.ubsunu.marks.service;
 
-import com.amiotisse.ubsunu.marks.model.MarkListCoef;
-import com.amiotisse.ubsunu.marks.model.TitleCoef;
-import com.amiotisse.ubsunu.marks.model.Mark;
-import com.amiotisse.ubsunu.marks.model.MarkList;
+import com.amiotisse.ubsunu.marks.client.MailerFiegnClient;
+import com.amiotisse.ubsunu.marks.exception.TitleAlreadyTakenException;
+import com.amiotisse.ubsunu.marks.exception.UserTypeNotAllowedException;
+import com.amiotisse.ubsunu.marks.model.*;
+import com.amiotisse.ubsunu.marks.model.builder.MarkListBuilder;
 import com.amiotisse.ubsunu.marks.repository.MarkListRepository;
 import com.google.common.collect.Lists;
 
@@ -19,10 +20,23 @@ public class MarkListService {
 
 
     private MarkListRepository repository;
+    private ArgsChecker checker;
+    private MailerFiegnClient mailerFiegnClient;
+    private boolean isMailerEnable;
 
+    public MarkListService(
+            MarkListRepository repository,
+            ArgsChecker checker,
+            MailerFiegnClient mailerFiegnClient,
+            boolean isMailerEnable
+    ) {
+        this.repository = repository;
+        this.checker = checker;
+        this.mailerFiegnClient = mailerFiegnClient;
+        this.isMailerEnable = isMailerEnable;
+    }
 
-
-    public List<Mark> moy (List<TitleCoef> titleCoefs){
+    public List<Mark> average (List<TitleCoef> titleCoefs){
         Map<String , Integer > coefs = titleCoefs
                 .parallelStream()
                 .collect(Collectors.toMap(TitleCoef::getMarkListTitle , TitleCoef::getCoef));
@@ -35,5 +49,22 @@ public class MarkListService {
                 .getNormalyzedMarks();
     }
 
+    public MarkList computeAvrageAndSave (String title , UserToken userToken, List<TitleCoef> titleCoefs)
+            throws UserTypeNotAllowedException , TitleAlreadyTakenException
+    {
+        checker.checkUserToken(userToken);
+        checker.checkTitleDoNotExist(title,repository);
+        return repository.save(new MarkListBuilder()
+                .setTitle(title)
+                .setOwnerUserId(userToken.getId())
+                .setMarks(average(titleCoefs))
+                .build());
+    }
+
+    public void sendMails ( MarkList markList){
+        if( isMailerEnable ){
+            mailerFiegnClient.publishMarkList(markList);
+        }
+    }
 
 }

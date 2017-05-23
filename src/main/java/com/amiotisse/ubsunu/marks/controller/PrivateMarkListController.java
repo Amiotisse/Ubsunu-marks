@@ -1,12 +1,13 @@
 package com.amiotisse.ubsunu.marks.controller;
 
 import com.amiotisse.ubsunu.marks.ApiErrors;
-import com.amiotisse.ubsunu.marks.client.MailerFiegnClient;
 import com.amiotisse.ubsunu.marks.exception.TitleAlreadyTakenException;
 import com.amiotisse.ubsunu.marks.exception.UserTypeNotAllowedException;
 import com.amiotisse.ubsunu.marks.model.Mark;
 import com.amiotisse.ubsunu.marks.model.MarkList;
+import com.amiotisse.ubsunu.marks.model.TitleCoef;
 import com.amiotisse.ubsunu.marks.model.UserToken;
+import com.amiotisse.ubsunu.marks.service.MarkListService;
 import com.amiotisse.ubsunu.marks.service.PrivateListService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +23,14 @@ import java.util.List;
 public class PrivateMarkListController {
 
     private PrivateListService<Mark , MarkList> service;
-    private MailerFiegnClient mailerFiegnClient;
-    private boolean isMailerEnable;
+    private MarkListService markListService ;
 
     public PrivateMarkListController(
-            PrivateListService<Mark, MarkList> markListService,
-            MailerFiegnClient mailerFiegnClient,
-            boolean isMailerEnable
+            PrivateListService<Mark, MarkList> service,
+            MarkListService markListService
     ) {
-        this.service = markListService;
-        this.mailerFiegnClient = mailerFiegnClient;
-        this.isMailerEnable = isMailerEnable;
+        this.service = service;
+        this.markListService = markListService;
     }
 
     @RequestMapping(path = "/teacher/marks" , method = RequestMethod.POST)
@@ -43,12 +41,29 @@ public class PrivateMarkListController {
     ){
         try {
             MarkList markList = service.save( title, userToken, marks );
+            markListService.sendMails(markList);
 
-            if( isMailerEnable ){
-                mailerFiegnClient.publishMarkList(markList);
-            }
             return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (UserTypeNotAllowedException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(ApiErrors.USER_TYPE_NOT_ALLOWED, HttpStatus.FORBIDDEN);
+        } catch (TitleAlreadyTakenException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(ApiErrors.LIST_TITLE_TAKEN, HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @RequestMapping(path = "/teacher/marks/average" , method = RequestMethod.POST)
+    public ResponseEntity<?> saveMarkListsAverage(
+            @RequestAttribute("claims") UserToken userToken,
+            @RequestBody List<TitleCoef> titleCoefList,
+            @RequestParam String title
+    ){
+        try {
+            MarkList markList = markListService.computeAvrageAndSave(title, userToken, titleCoefList);
+            markListService.sendMails(markList);
+
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (UserTypeNotAllowedException e) {
             e.printStackTrace();
             return new ResponseEntity<>(ApiErrors.USER_TYPE_NOT_ALLOWED, HttpStatus.FORBIDDEN);

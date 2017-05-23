@@ -4,6 +4,7 @@ import com.amiotisse.ubsunu.marks.controller.StudentListController;
 import com.amiotisse.ubsunu.marks.model.Student;
 import com.amiotisse.ubsunu.marks.model.StudentList;
 import com.amiotisse.ubsunu.marks.model.factory.StudentListFactory;
+import com.amiotisse.ubsunu.marks.service.ArgsChecker;
 import com.amiotisse.ubsunu.marks.service.PrivateListService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,12 +25,16 @@ public class StudentListConfiguration {
     }
 
     @Bean
-    PrivateListService<Student, StudentList> studentListPrivateListService(MongoRepository<StudentList, String> studentListRepository, StudentListFactory studentListFactory){
-        return new PrivateListService<>(studentListRepository, studentListFactory);
+    PrivateListService<Student, StudentList> studentListPrivateListService(
+            MongoRepository<StudentList, String> studentListRepository,
+            StudentListFactory studentListFactory,
+            ArgsChecker checker
+    ){
+        return new PrivateListService<>(studentListRepository, studentListFactory , checker);
     }
 
     @Bean
-    StudentListController studentListController( PrivateListService<Student, StudentList> StudentListService){
+    StudentListController studentListController(PrivateListService<Student, StudentList> StudentListService){
         return new StudentListController(StudentListService);
     }
 }

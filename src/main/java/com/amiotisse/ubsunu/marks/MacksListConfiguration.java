@@ -6,8 +6,9 @@ import com.amiotisse.ubsunu.marks.controller.PublicMarkListController;
 import com.amiotisse.ubsunu.marks.model.Mark;
 import com.amiotisse.ubsunu.marks.model.MarkList;
 import com.amiotisse.ubsunu.marks.model.factory.MarkListFactory;
-import com.amiotisse.ubsunu.marks.model.factory.PrivateListFactory;
 import com.amiotisse.ubsunu.marks.repository.MarkListRepository;
+import com.amiotisse.ubsunu.marks.service.ArgsChecker;
+import com.amiotisse.ubsunu.marks.service.MarkListService;
 import com.amiotisse.ubsunu.marks.service.PrivateListService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
@@ -27,7 +28,9 @@ public class MacksListConfiguration {
     boolean isMailerEnable;
 
     @Bean
-    PublicMarkListController publicMarksListController (MarkListRepository markListRepository){
+    PublicMarkListController publicMarksListController (
+            MarkListRepository markListRepository
+    ){
         return new PublicMarkListController(markListRepository);
     }
 
@@ -37,12 +40,30 @@ public class MacksListConfiguration {
     }
 
     @Bean
-    PrivateListService<Mark, MarkList> markListService(MongoRepository<MarkList, String> markListRepository, MarkListFactory markListFactory){
-        return new PrivateListService<>(markListRepository, markListFactory);
+    PrivateListService<Mark, MarkList> markListPrivateListService(
+            MongoRepository<MarkList, String> markListRepository,
+            MarkListFactory markListFactory,
+            ArgsChecker checker
+    ){
+        return new PrivateListService<>(markListRepository, markListFactory , checker);
     }
 
     @Bean
-    PrivateMarkListController privateMarkListController( MailerFiegnClient mailerFiegnClient, PrivateListService<Mark, MarkList> markListService){
-        return new PrivateMarkListController(markListService , mailerFiegnClient , isMailerEnable);
+    MarkListService markListService(
+            MarkListRepository markListRepository,
+            ArgsChecker argsChecker,
+            MailerFiegnClient mailerFiegnClient
+    ){
+        return new MarkListService(
+                markListRepository,
+                argsChecker,
+                mailerFiegnClient,
+                isMailerEnable
+        );
+    }
+
+    @Bean
+    PrivateMarkListController privateMarkListController(PrivateListService<Mark, MarkList> service, MarkListService markListService){
+        return new PrivateMarkListController(service , markListService);
     }
 }

@@ -1,7 +1,5 @@
 package com.amiotisse.ubsunu.marks;
 
-
-
 import com.amiotisse.ubsunu.marks.model.dto.UserTokenDTO;
 import com.google.common.collect.Lists;
 import com.himnabil.alphau.client.AlphaUFiegnClient;

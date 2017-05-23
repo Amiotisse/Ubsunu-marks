@@ -22,10 +22,16 @@ public class PrivateListService<Entity , L extends PrivateList<Entity>> {
 
     private MongoRepository< L , String> repository;
     private PrivateListFactory<Entity, L> factory;
+    private ArgsChecker checker;
 
-    public PrivateListService(MongoRepository<L, String> repository, PrivateListFactory<Entity, L> factory) {
+    public PrivateListService(
+            MongoRepository<L, String> repository,
+            PrivateListFactory<Entity, L> factory,
+            ArgsChecker checker
+    ) {
         this.repository = repository;
         this.factory = factory;
+        this.checker = checker;
     }
 
     public L save (String title ,
@@ -35,10 +41,8 @@ public class PrivateListService<Entity , L extends PrivateList<Entity>> {
             UserTypeNotAllowedException,
             TitleAlreadyTakenException
     {
-        if (userToken.getUserType()  != UserType.teacher)
-            throw new UserTypeNotAllowedException();
-        if (repository.exists( title ))
-            throw new TitleAlreadyTakenException();
+        checker.checkUserToken(userToken);
+        checker.checkTitleDoNotExist(title,repository);
         return repository.save( factory.build(title , userToken.getId(), list) );
     }
 
