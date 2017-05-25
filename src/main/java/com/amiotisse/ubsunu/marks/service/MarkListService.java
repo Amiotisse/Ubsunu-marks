@@ -40,13 +40,14 @@ public class MarkListService {
         Map<String , Integer > coefs = titleCoefs
                 .parallelStream()
                 .collect(Collectors.toMap(TitleCoef::getMarkListTitle , TitleCoef::getCoef));
-        int sumCoef = titleCoefs.stream().mapToInt(TitleCoef::getCoef).sum();
+
         return titleCoefs
                 .parallelStream()
                 .map(titleCoef -> repository.findOne(titleCoef.getMarkListTitle()))
                 .map((ml) -> new MarkListCoef(coefs.get(ml.getTitle()),ml.getList()) )
                 .reduce( new MarkListCoef(0 , Lists.newArrayList()) ,MarkListCoef::add )
-                .getNormalyzedMarks(sumCoef);
+                .getMarks();
+
     }
 
     public MarkList computeAvrageAndSave (String title , UserToken userToken, List<TitleCoef> titleCoefs)

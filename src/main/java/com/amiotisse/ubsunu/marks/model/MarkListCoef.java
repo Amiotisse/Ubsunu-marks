@@ -34,27 +34,13 @@ public class MarkListCoef {
         return marks;
     }
 
-    public List<Mark> getNormalyzedMarks() {
-        return marks
-                .stream()
-                .map( mark -> new Mark(mark.getStudent() , mark.getValue() / coef))
-                .collect(Collectors.toList());
-    }
-
-    public List<Mark> getNormalyzedMarks(int coef) {
-        return marks
-                .stream()
-                .map( mark -> new Mark(mark.getStudent() , mark.getValue() / coef))
-                .collect(Collectors.toList());
-    }
-
     public void setMarks(List<Mark> marks) {
         this.marks = marks;
     }
 
     public MarkListCoef add ( MarkListCoef that){
-        Map<Student,Float> thatMap = that.marks.stream().collect(Collectors.toMap(Mark::getStudent,mark -> mark.getValue() * that.coef));
-        Map<Student,Float> thisMap = this.marks.stream().collect(Collectors.toMap(Mark::getStudent,mark -> mark.getValue() * this.coef));
+        Map<Student,Float> thatMap = that.marks.stream().collect(Collectors.toMap(Mark::getStudent,mark -> (mark.getValue() * that.coef)/(that.coef + this.coef)));
+        Map<Student,Float> thisMap = this.marks.stream().collect(Collectors.toMap(Mark::getStudent,mark -> (mark.getValue() * this.coef)/(that.coef + this.coef)));
 
         List<Mark> marks = Stream
                 .of(thisMap,thatMap)
