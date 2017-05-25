@@ -41,6 +41,13 @@ public class MarkListCoef {
                 .collect(Collectors.toList());
     }
 
+    public List<Mark> getNormalyzedMarks(int coef) {
+        return marks
+                .stream()
+                .map( mark -> new Mark(mark.getStudent() , mark.getValue() / coef))
+                .collect(Collectors.toList());
+    }
+
     public void setMarks(List<Mark> marks) {
         this.marks = marks;
     }
