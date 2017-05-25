@@ -14,6 +14,8 @@ public class TitleCoef {
         this.coef = coef;
     }
 
+    public TitleCoef(){}
+
     public String getMarkListTitle() {
         return markListTitle;
     }
